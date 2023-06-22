@@ -1,6 +1,6 @@
 import csv
 from typing import List
-
+from pathlib import Path
 
 class Item:
     """
@@ -53,9 +53,11 @@ class Item:
         return f"Item('{self.__name}', {self.price}, {self.quantity})"
 
     @classmethod
-    def instantiate_from_csv(cls, filename: str = '/Users/sergejmalarov/PycharmProjects/malyarov-electronics-shop-project/src/items.csv') -> List['Item']:
+    def instantiate_from_csv(cls, filename: str = 'items.csv') -> List['Item']:
         cls.all = []  # Сброс списка all к пустому состоянию
-        with open(filename, 'r') as f:
+        base_path = Path(__file__).parent  # определение пути к файлу, где находится данный скрипт
+        file_path = (base_path / filename).resolve()  # объединение пути к скрипту и имени файла
+        with file_path.open('r', encoding='utf-8') as f:
             reader = csv.DictReader(f)
             for row in reader:
                 name = row.get('name')
