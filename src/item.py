@@ -52,6 +52,9 @@ class Item:
         """
         return f"Item('{self.__name}', {self.price}, {self.quantity})"
 
+    def __str__(self):
+        return self.__name
+
     @classmethod
     def instantiate_from_csv(cls, filename: str = 'items.csv') -> List['Item']:
         cls.all = []  # Сброс списка all к пустому состоянию
