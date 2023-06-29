@@ -15,8 +15,7 @@ class Phone(Item):
         :param sim_cards: Количество поддерживаемых сим-карт.
         """
         super().__init__(name, price, quantity)
-        if sim_cards <= 0:
-            raise ValueError("Количество физических SIM-карт должно быть целым числом больше нуля.")
+        self.__sim_cards = None
         self.sim_cards = sim_cards
 
     def __repr__(self):
@@ -25,8 +24,12 @@ class Phone(Item):
         """
         return f"Phone('{self.name}', {self.price}, {self.quantity}, {self.sim_cards})"
 
-    def __add__(self, other):
-        if isinstance(other, Item):
-            return self.quantity + other.quantity
-        else:
-            raise TypeError("Операция сложения доступна только для экземпляров классов Phone и Item.")
+    @property
+    def sim_cards(self):
+        return self.__sim_cards
+
+    @sim_cards.setter
+    def sim_cards(self, sim_cards):
+        if sim_cards <= 0:
+            raise ValueError("Количество физических SIM-карт должно быть целым числом больше нуля.")
+        self.__sim_cards = sim_cards
