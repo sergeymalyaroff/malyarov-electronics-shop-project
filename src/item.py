@@ -46,6 +46,12 @@ class Item:
         """
         self.price = self.price * self.__class__.pay_rate
 
+    def __add__(self, other):
+        if isinstance(other, Item):
+            return self.quantity + other.quantity
+        else:
+            raise TypeError("Операция сложения доступна только для экземпляров класса Item.")
+
     def __repr__(self):
         """
         Возвращает строковое представление экземпляра класса Item.
