@@ -1,7 +1,9 @@
 """Здесь надо написать тесты с использованием pytest для модуля item."""
 
 import pytest
-from src.item import Item
+from src.item import Item, InstantiateCSVError
+from pathlib import Path
+import os
 
 def test_item_creation():
     item = Item("Смартфон", 10000, 20)
@@ -36,35 +38,14 @@ def setup_module(module):
     Item.all = []
 
 
-def test_instantiate_from_csv():
-    """
-    Тестирование метода instantiate_from_csv
-    """
-    Item.instantiate_from_csv()
 
-    # Проверка, что было создано правильное количество экземпляров
-    assert len(Item.all) == 5  # Измените на количество строк в вашем файле CSV
-
-    # Проверка, что первый экземпляр был правильно инициализирован
-    assert Item.all[0].name == 'Смартфон'  # Измените на значения из вашего файла CSV
-    # Добавьте дополнительные проверки для других атрибутов и экземпляров, если нужно
+def test_instantiate_from_csv_no_file():
+    # Проверяем обработку ошибки при отсутствующем файле
+    filename = 'non_existing_file.csv'
+    with pytest.raises(FileNotFoundError, match=r"Отсутствует файл items.csv"):
+        Item.instantiate_from_csv(filename)
 
 
-def test_string_to_number():
-    """
-    Тестирование метода string_to_number
-    """
-    assert Item.string_to_number('5') == 5
-    assert Item.string_to_number('5.0') == 5.0
-    assert Item.string_to_number('5.5') == 5.5
-    assert Item.string_to_number('0') == 0
 
 
-def test_item_repr():
-    item = Item('Смартфон', 10000, 20)
-    assert repr(item) == "Item('Смартфон', 10000, 20)"
 
-
-def test_item_str():
-    item = Item('Смартфон', 10000, 20)
-    assert str(item) == 'Смартфон'

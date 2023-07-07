@@ -2,6 +2,12 @@ import csv
 from typing import List
 from pathlib import Path
 
+class InstantiateCSVError(Exception):
+    """
+    Исключение, возникающее при попытке инстанцировать объекты Item из поврежденного CSV-файла.
+    """
+    pass
+
 class Item:
     """
     Класс для представления товара в магазине.
@@ -63,16 +69,25 @@ class Item:
 
     @classmethod
     def instantiate_from_csv(cls, filename: str = 'items.csv') -> List['Item']:
+
         cls.all = []  # Сброс списка all к пустому состоянию
         base_path = Path(__file__).parent  # определение пути к файлу, где находится данный скрипт
         file_path = (base_path / filename).resolve()  # объединение пути к скрипту и имени файла
-        with file_path.open('r', encoding='utf-8') as f:
-            reader = csv.DictReader(f)
-            for row in reader:
-                name = row.get('name')
-                price = cls.string_to_number(row.get('price'))
-                quantity = cls.string_to_number(row.get('quantity'))
-                cls(name, price, quantity)  # Инициализация нового экземпляра Item
+
+        try:
+            with file_path.open('r', encoding='windows-1251') as f:
+                reader = csv.DictReader(f)
+                for row in reader:
+                    if 'name' not in row or 'price' not in row or 'quantity' not in row:
+                        raise InstantiateCSVError("Файл items.csv поврежден")
+
+                    name = row.get('name')
+                    price = cls.string_to_number(row.get('price'))
+                    quantity = cls.string_to_number(row.get('quantity'))
+                    cls(name, price, quantity)  # Инициализация нового экземпляра Item
+
+        except FileNotFoundError:
+            raise FileNotFoundError("Отсутствует файл items.csv")
 
     @staticmethod
     def string_to_number(s: str) -> float:
